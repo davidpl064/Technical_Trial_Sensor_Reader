@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sensor_reader"
+version = "1.0.0"
+authors = [
+  { name="David Perez", email="davi.perlam@gmail.com" }
+]
+description = "Sensor Reader app for Unversity of Vigo technical trial."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "opencv",
+  "xml",
+  "jinja2",
+  "PyExifTool"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/davidpl064/Technical_Trial_Sensor_Reader"
+"Bug Tracker" = "https://github.com/davidpl064/Technical_Trial_Sensor_Reader/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sensor_reader*"]
+namespaces = true # set false to not include folders without __init__.py file.
