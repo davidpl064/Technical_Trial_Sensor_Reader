@@ -1,8 +1,15 @@
+from enum import Enum
 import re
 from typing import Any
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, model_validator
+from pydantic.networks import IPvAnyAddress
+
+class AppCommandActions(Enum):
+    START: int = 0
+    STOP: int = 1
+    EXIT: int = 2
 
 class UrlConstraints(BaseModel):
     """Class model to define generic URLs format parameters."""
@@ -53,3 +60,32 @@ class NatsUrl(BaseModel):
             return self
         # If no IP and port are found, raise an error
         raise ValueError("Invalid IP or port.")
+
+class IPAddressWithPort(BaseModel):
+    uri: str
+    ip: IPvAnyAddress = None
+    port: int = None
+
+    @model_validator(mode='after')
+    def _validate_uri(self):
+            if ":" in self.uri:
+                ip, port = self.uri.split(":")
+
+                # Validate IP
+                ip = ip.strip()
+                try:
+                    IPvAnyAddress._validate(ip)
+                except ValueError:
+                    if ip != "localhost":
+                        raise ValueError('Invalid IP address or localhost')
+
+                # Validate port
+                port = int(port)
+                if not (0 <= port <= 65535):
+                    raise ValueError("Port must be between 0 and 65535.")
+
+                self.ip, self.port = ip, port
+                return self
+    
+            # If no IP and port are found, raise an error
+            raise ValueError("Invalid IP or port.")
