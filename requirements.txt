@@ -1,0 +1,14 @@
+fire
+loguru
+fire
+matplotlib
+nats-py
+numpy
+pre-commit
+psycopg2-binary
+pydantic
+pydantic-settings
+pytest
+pytest-cov
+setuptools
+wheel
