@@ -1,4 +1,4 @@
-name: app_sensorreader
+name: app
 services:
   nats:
     image: nats
@@ -23,3 +23,7 @@ services:
       - POSTGRES_PASSWORD=1234
     ports:
       - '5432:5432'
+  sense_reader:
+    image: sensor_reader:latest
+    # command: uvicorn sense_api.app:app --host 0.0.0.0 --port 5000 --ssl-keyfile /certs/privkey2.pem --ssl-certfile /certs/fullchain2.pem
+    network_mode: host

@@ -1,7 +1,9 @@
 import argparse
 import asyncio
+
 import nats
-from nats.errors import ConnectionClosedError, TimeoutError, NoServersError
+from nats.errors import ConnectionClosedError, NoServersError, TimeoutError
+
 
 async def main(args):
     nats_client = await nats.connect(args.uri_nats_server)
@@ -17,7 +19,8 @@ async def main(args):
     await nats_client.publish("app_command", str(app_command).encode())
     await nats_client.drain()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("app_command", type=str, help="Root directory of the dataset")
     parser.add_argument(
