@@ -10,13 +10,28 @@ from sensor_reader.data.custom_types import NatsUrl
 
 class SensorInfrared:
     def __init__(
-        self, min_value_range: int, max_value_range: int, uri_message_server: str
+        self, min_range_value: int, max_range_value: int, uri_message_server: str
     ):
-        self._min_value_range = min_value_range
-        self._max_value_range = max_value_range
+        data_resolution = 2**16
+        assert (
+            type(min_range_value) is int
+        ), "'min_range_value' needed in case of mocked infrared sensor."
+        assert (
+            type(max_range_value) is int
+        ), "'max_range_value' needed in case of mocked infrared sensor."
+
+        assert (
+            min_range_value >= 0 and min_range_value < data_resolution
+        ), "'min_range_value' has to be positive and not exceed set sensor resolution 2^16."
+        assert (
+            max_range_value >= 0 and max_range_value < data_resolution
+        ), "'max_range_value' has to be positive and not exceed set sensor resolution 2^16."
+
+        self._min_value_range = min_range_value
+        self._max_value_range = max_range_value
         self._last_data = np.random.randint(
-            min_value_range, max_value_range + 1, size=1, dtype=np.uint16
-        )[0]
+            min_range_value, max_range_value + 1, size=64, dtype=np.uint16
+        )
         self._uri_message_server = NatsUrl(url=uri_message_server)
         self._topic_raw_data = "sensors"
         self._freq_update_data = 1.0

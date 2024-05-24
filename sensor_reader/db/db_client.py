@@ -90,12 +90,9 @@ class PostgresDbClient:
             data (list[int]): data to be stored.
             timestamp (int): timestamp of the data.
         """
-        if data is None:
-            return
-
         self.cursor.execute(
             f"INSERT INTO {self.table_name} (value, timestamp) VALUES (%s, %s)",
-            (data[0], timestamp),
+            (data, timestamp),
         )
         self.db_conn.commit()  # type: ignore
 

@@ -12,7 +12,8 @@ services:
     shm_size: 128mb
     # or set shared memory limit when deploy via swarm stack
     volumes:
-      - /home/dplamarca/docker/postgresql:/var/lib/postgresql/data
+      # - /home/dplamarca/docker/postgresql:/var/lib/postgresql/data
+      - ./sensor_reader/db/data:/var/lib/postgresql/data
     #  - type: tmpfs
     #    target: /dev/shm
     #    tmpfs:

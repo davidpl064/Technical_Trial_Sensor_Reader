@@ -12,7 +12,8 @@ services:
     shm_size: 128mb
     # or set shared memory limit when deploy via swarm stack
     volumes:
-      - /home/dplamarca/docker/postgresql:/var/lib/postgresql/data
+      # - /home/dplamarca/docker/postgresql:/var/lib/postgresql/data
+      - ./sensor_reader/db/data:/var/lib/postgresql/data
     #  - type: tmpfs
     #    target: /dev/shm
     #    tmpfs:
@@ -24,8 +25,11 @@ services:
     ports:
       - '5432:5432'
   sense_reader:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     image: sensor_reader:latest
     network_mode: host
     command: $LAUNCH_APP_COMMAND
     env_file:
-      - app_launch_arguments.env
+      - .env

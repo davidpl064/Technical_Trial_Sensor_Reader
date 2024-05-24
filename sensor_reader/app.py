@@ -211,6 +211,10 @@ class AppSensorReader:
         new_sensor_data = self.read_data_from_sensor()
         timestamp = datetime.now()
 
+        if not new_sensor_data:
+            await asyncio.sleep(self.sleep_on_standby)
+            return
+
         await self.publish_sensor_data(new_sensor_data)
 
         # Save new read sensor data on database
@@ -225,14 +229,17 @@ class AppSensorReader:
         Returns:
             list[int] | None: raw data from sensor. None in case of corrupted data.
         """
+        if not self.last_sensor_data:
+            return self.last_sensor_data
+
         # Check data has been correctly parsed
-        if len(self.last_sensor_data != self.sensor_data_array_length):
+        if len(self.last_sensor_data) != self.sensor_data_array_length:
             logger.warning("Bad data read from sensor. Data will be discarded.")
             self.last_sensor_data = None
 
         # last_sensor_data = self.mock_sensor.get_data()
         last_sensor_data = self.last_sensor_data
-        logger.info(f"New read data: {last_sensor_data}")
+        logger.info(f"Read data: {last_sensor_data}")
 
         return last_sensor_data
 
@@ -300,16 +307,9 @@ def main(
 
     tasks = []
     if sensor_type == "mock":
-        assert (
-            type(min_range_value) is int
-        ), "'min_range_value' needed in case of mocked infrared sensor."
-        assert (
-            type(max_range_value) is int
-        ), "'max_range_value' needed in case of mocked infrared sensor."
-
         uri_message_server = "nats://localhost:4222"
         mock_sensor = SensorInfrared(
-            min_range_value, max_range_value, uri_message_server
+            min_range_value, max_range_value, uri_message_server  # type: ignore
         )
         tasks.append(mock_sensor.run())
 
