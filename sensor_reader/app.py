@@ -27,6 +27,7 @@ class AppSensorReader:
         self.topic_command = "app_command"
         self.topic_publishing = "publishing"
         self.sleep_on_standby = 0.2
+        self.sensor_data_array_length = 64
         self.last_sensor_data: list[int] | None = None
 
         self.freq_report_data = freq_report_data
@@ -91,7 +92,7 @@ class AppSensorReader:
         flag_connected = False
         while not flag_connected:
             logger.info(
-                f"Trying to connect to database server on URI: {self.db_client.address_db_server}"
+                f"Trying to connect to database server on URI: {self.db_client.address_db_server.uri}"
             )
             db_conn, error_code = self.db_client.connect()
 
@@ -101,7 +102,7 @@ class AppSensorReader:
                 await asyncio.sleep(2)
 
         logger.success(
-            f"Successfully connected to database server on URI: {self.db_client.address_db_server}"
+            f"Successfully connected to database server on URI: {self.db_client.address_db_server.uri}"
         )
 
         # Setup basic data structure
@@ -224,8 +225,13 @@ class AppSensorReader:
         Returns:
             list[int] | None: raw data from sensor. None in case of corrupted data.
         """
+        # Check data has been correctly parsed
+        if len(self.last_sensor_data != self.sensor_data_array_length):
+            logger.warning("Bad data read from sensor. Data will be discarded.")
+            self.last_sensor_data = None
+
         # last_sensor_data = self.mock_sensor.get_data()
-        last_sensor_data: list[int] | None = self.last_sensor_data
+        last_sensor_data = self.last_sensor_data
         logger.info(f"New read data: {last_sensor_data}")
 
         return last_sensor_data
@@ -240,7 +246,7 @@ class AppSensorReader:
             self.topic_publishing, str(last_sensor_data).encode()
         )
 
-    async def disconnect_from_server(self):
+    async def disconnect_from_message_server(self):
         """Disconnect from NATS server and unsubscribe from capturing and command topics."""
         # Remove interest in subscription.
         await self.sub_raw_data.unsubscribe()
@@ -251,10 +257,15 @@ class AppSensorReader:
 
     async def close(self):
         """Close all connections to external services and update app status to exit."""
+        # Update app state to exiting
         self.flag_exit = True
         self.flag_on_standby = True
 
-        await self.disconnect_from_server()
+        # Close connection to NATS server
+        await self.disconnect_from_message_server()
+
+        # Close database connection
+        self.db_client.disconnect()
 
 
 async def run_concurrent_tasks(tasks: list[Coroutine]):

@@ -1,3 +1,5 @@
+import asyncio
+
 import pytest
 
 from sensor_reader.app import AppSensorReader
@@ -21,12 +23,8 @@ class TestNatsClient:
     ):
         freq_read_data = 5
         uri_db_server = "127.0.0.1:5432"
-        min_range_value = 0
-        max_range_value = 10
 
-        app_sensor_reader = AppSensorReader(
-            freq_read_data, uri_db_server, min_range_value, max_range_value
-        )
+        app_sensor_reader = AppSensorReader(freq_read_data, uri_db_server)
 
         # Modify URI for NATS server
         app_sensor_reader.uri_message_server = NatsUrl(url=uri_message_server)
@@ -43,4 +41,5 @@ class TestNatsClient:
         assert any(expected_log_message in record.message for record in log_records)
 
         # Close connection
-        await app_sensor_reader.disconnect_from_server()
+        await app_sensor_reader.disconnect_from_message_server()
+        await asyncio.sleep(5)

@@ -98,3 +98,8 @@ class PostgresDbClient:
             (data[0], timestamp),
         )
         self.db_conn.commit()  # type: ignore
+
+    def disconnect(self):
+        """Close cursor and connection to server database."""
+        self.cursor.close()
+        self.db_conn.close()

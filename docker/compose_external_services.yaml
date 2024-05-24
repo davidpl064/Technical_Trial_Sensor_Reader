@@ -23,6 +23,3 @@ services:
       - POSTGRES_PASSWORD=1234
     ports:
       - '5432:5432'
-  sense_reader:
-    image: sensor_reader:latest
-    network_mode: host
