@@ -10,5 +10,6 @@ pydantic
 pydantic-settings
 pytest
 pytest-cov
+pytest-postgresql
 setuptools
 wheel

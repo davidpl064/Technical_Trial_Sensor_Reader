@@ -15,7 +15,10 @@ dependencies:  # Everything under this, installed by conda.
 - pydantic
 - pydantic-settings
 - pytest
+- pytest-asyncio
 - pytest-cov
+- pytest-loguru
+- pytest-postgresql
 - python
 - setuptools
 - pip:  # Everything under this, installed by pip.

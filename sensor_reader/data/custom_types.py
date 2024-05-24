@@ -1,6 +1,5 @@
 import re
 from enum import Enum
-from typing import Any
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, model_validator
@@ -8,6 +7,8 @@ from pydantic.networks import IPvAnyAddress
 
 
 class AppCommandActions(Enum):
+    """Enum class to define command actions to set AppSensorReader state."""
+
     START: int = 0
     STOP: int = 1
     EXIT: int = 2
@@ -65,9 +66,11 @@ class NatsUrl(BaseModel):
 
 
 class IPAddressWithPort(BaseModel):
+    """Class model to define addresses defined by combination of IP and port."""
+
     uri: str
-    ip: IPvAnyAddress = None
-    port: int = None
+    ip: IPvAnyAddress | None = None
+    port: int | None = None
 
     @model_validator(mode="after")
     def _validate_uri(self):

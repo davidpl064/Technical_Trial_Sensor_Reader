@@ -1,9 +1,9 @@
 import asyncio
-import sys
 
 import nats
 import numpy as np
 from loguru import logger
+from nats.errors import ConnectionClosedError, NoServersError, TimeoutError
 
 from sensor_reader.data.custom_types import NatsUrl
 
@@ -22,6 +22,7 @@ class SensorInfrared:
         self._freq_update_data = 1.0
 
     async def connect_to_message_server(self):
+        """Connect to NATS server."""
         flag_connected = False
         while not flag_connected:
             # Connect to local NATS server
@@ -34,15 +35,19 @@ class SensorInfrared:
                 flag_connected = True
             except Exception as err:
                 await asyncio.sleep(2)
+                logger.debug(f"Cannot connect to NATS server: {err}")
 
-    async def connect_errors_handler(self, err):
-        logger.error("Mock sensor cannot connect to NATS message server")
+    async def connect_errors_handler(
+        self, err: ConnectionClosedError | NoServersError | TimeoutError
+    ):
+        logger.error(f"Mock sensor cannot connect to NATS message server: {err}")
 
     def generate_data_mock(self):
-        # Mock sensor data readings as a random process (probably not the real behaviour but enough for testing purposes)
+        # Mock sensor data readings as a random process
+        # (probably not the real behaviour but enough for testing purposes)
         self._last_data = np.random.randint(
-            self._min_value_range, self._max_value_range + 1, size=1, dtype=np.uint16
-        )[0]
+            self._min_value_range, self._max_value_range + 1, size=64, dtype=np.uint16
+        )
         logger.debug(f"New sensor data generated: {self._last_data}")
 
     def get_data(self):

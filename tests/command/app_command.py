@@ -2,21 +2,26 @@ import argparse
 import asyncio
 
 import nats
-from nats.errors import ConnectionClosedError, NoServersError, TimeoutError
 
 
-async def main(args):
-    nats_client = await nats.connect(args.uri_nats_server)
+async def send_command(uri_nats_server: str, app_command: str):
+    """Send command action to corresponding topic on NATS server.
 
-    match args.app_command:
+    Args:
+        uri_nats_server (str): URI of destination NATS server.
+        app_command (str): command to be sent.
+    """
+    nats_client = await nats.connect(uri_nats_server)
+
+    match app_command:
         case "start":
-            app_command = 0
+            app_command = str(0)
         case "stop":
-            app_command = 1
+            app_command = str(1)
         case "exit":
-            app_command = 2
+            app_command = str(2)
 
-    await nats_client.publish("app_command", str(app_command).encode())
+    await nats_client.publish("app_command", app_command.encode())
     await nats_client.drain()
 
 
@@ -31,4 +36,4 @@ if __name__ == "__main__":
         default="nats://localhost:4222",
     )
     args = parser.parse_args()
-    asyncio.run(main(args))
+    asyncio.run(send_command(args.uri_nats_server, args.app_command))
