@@ -5,7 +5,7 @@ The application can be run as a Docker container or directly from source code. I
 installation of required libraries, it is recommended to use the Docker version. To build and run the Docker version, docker compose files has
 been provided to simplify the process, which can be found in the `docker` folder.
 
-> Note: To run the app from source code requires Python dependencies to be installed. User can install all requires packages by installing
+> Note: To run the app from source code requires Python dependencies to be installed. User can install all required packages by installing
 a conda environment using the file `environment.yml`.
 ```
 $ conda env update -f environment.yml
@@ -19,6 +19,10 @@ Docker compose instructions has been included in the bash script `run.sh`. Being
 ```
 $ ./run.sh
 ```
+> [!CAUTION]
+> The database server store files to a mounted volume. In Windows OS isues related to permissions to write to
+mentioned volume have been encountered. Please, in case of running in Windows, set the mounted volume to a WSL directory.
+Mounted volume can be defined in the docker compose files.
 
 Execution from source code can be done using the command:
 ```
