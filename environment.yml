@@ -1,0 +1,26 @@
+name: sensor_reader_app_env  # Environment name.
+channels:
+  - conda-forge
+  - defaults
+dependencies:  # Everything under this, installed by conda.
+- build
+- fire
+- loguru
+- fire
+- matplotlib
+- numpy
+- pip
+- pre-commit
+- psycopg2
+- pydantic
+- pydantic-settings
+- pytest
+- pytest-asyncio
+- pytest-cov
+- pytest-loguru
+- pytest-postgresql
+- python
+- setuptools
+- pip:  # Everything under this, installed by pip.
+  - nats-py
+  - wheel
