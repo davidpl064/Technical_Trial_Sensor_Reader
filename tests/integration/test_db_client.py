@@ -1,8 +1,6 @@
-import asyncio
 import pytest
 
 from sensor_reader.app import AppSensorReader
-from sensor_reader.data.custom_types import NatsUrl
 
 
 class TestNatsClient:
@@ -22,9 +20,7 @@ class TestNatsClient:
     ):
         freq_read_data = 5
 
-        app_sensor_reader = AppSensorReader(
-            freq_read_data, uri_db_server
-        )
+        app_sensor_reader = AppSensorReader(freq_read_data, uri_db_server)
 
         # Connect to NATS server
         flag_connected = await app_sensor_reader.connect_to_db()
